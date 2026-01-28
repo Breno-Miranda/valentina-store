@@ -8,7 +8,9 @@
         "image": "assets/kaiak-oceano-final.png",
         "isSale": true,
         "badge": "OFERTA RELÂMPAGO",
-        "hasTimer": true
+        "hasTimer": true,
+        "timerHours": 2,
+        "featured": true
     },
     {
         "id": 6,
@@ -18,7 +20,10 @@
         "oldPrice": 39.90,
         "image": "assets/eudora-shampoo-v2.png",
         "isSale": true,
-        "sold": true
+        "sold": true,
+        "hasTimer": true,
+        "timerHours": 2,
+        "featured": true
     },
     {
         "id": 7,
@@ -28,7 +33,10 @@
         "oldPrice": 48.00,
         "image": "assets/eudora-resgate-v2.png",
         "isSale": true,
-        "sold": true
+        "sold": true,
+        "hasTimer": true,
+        "timerHours": 2,
+        "featured": false
     },
     {
         "id": 8,
@@ -38,6 +46,9 @@
         "oldPrice": 185.90,
         "image": "assets/natura-luna-v2.png",
         "isSale": true,
-        "sold": true
+        "sold": true,
+        "hasTimer": true,
+        "timerHours": 2,
+        "featured": true
     }
 ]

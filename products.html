@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- VERSION: V0.11.8 -->
+<!-- VERSION: V0.11.13 -->
 <html lang="pt-BR">
 
 <head>
@@ -150,28 +150,23 @@
         </div>
     </section>
 
-    <section class="info-block">
+    <section class="info-block" id="featuredSection" style="display: none;">
         <div class="container info-block__container">
             <div class="info-block__content">
                 <span class="product-card__tag" style="margin-bottom: 1rem; display: inline-block;">Destaque da
                     Semana</span>
-                <h2 class="section-title text-left" style="margin-bottom: 1rem;">Kaiak Oceano</h2>
-                <p>
-                    O frescor das profundezas do oceano agora ao seu alcance. Com notas marinhas e revigorantes, é a
-                    escolha perfeita para quem busca sofisticação no dia a dia.
-                </p>
+                <h2 class="section-title text-left" id="featuredTitle" style="margin-bottom: 1rem;"></h2>
+                <p id="featuredDesc"></p>
                 <div class="product-card__price-wrapper" style="margin: 1.5rem 0;">
-                    <span class="price-old">R$ 189,90</span>
-                    <p class="product-card__price">R$ 159,99</p>
+                    <span class="price-old" id="featuredOldPrice"></span>
+                    <p class="product-card__price" id="featuredPrice"></p>
                 </div>
-                <button class="btn btn--primary"
-                    onclick="addToCart('Kaiak Oceano Masculino 100 ml', 159.99, 189.90, 'assets/kaiak-oceano-final.png')">
+                <button class="btn btn--primary" id="featuredBtn">
                     Garantir Oferta de Destaque
                 </button>
             </div>
             <div class="info-block__image">
-                <img src="assets/kaiak-oceano-final.png" alt="Produto de Destaque" class="focus-image"
-                    style="max-height: 400px;">
+                <img src="" alt="Produto de Destaque" id="featuredImg" class="focus-image" style="max-height: 400px;">
             </div>
         </div>
     </section>
@@ -250,6 +245,9 @@
             </div>
             <button class="cart-checkout-btn" onclick="checkoutWhatsApp()">
                 Finalizar no WhatsApp
+            </button>
+            <button class="cart-continue-btn" onclick="toggleCart()">
+                Continuar Comprando
             </button>
         </div>
     </div>
@@ -339,7 +337,14 @@
             const endTime = getEndTime();
             function tick() {
                 const now = Date.now();
-                const remaining = Math.max(0, Math.floor((endTime - now) / 1000));
+                let remaining = Math.max(0, Math.floor((endTime - now) / 1000));
+
+                if (remaining <= 0) {
+                    const newEnd = Date.now() + (durationInSeconds * 1000);
+                    setCookie(COOKIE_NAME, newEnd, 1);
+                    location.reload();
+                    return;
+                }
                 let hours = parseInt(remaining / 3600, 10);
                 let minutes = parseInt((remaining % 3600) / 60, 10);
                 let seconds = parseInt(remaining % 60, 10);
@@ -361,7 +366,6 @@
 
         window.onload = function () {
             loadProducts();
-            updateTimers(2 * 60 * 60);
             updateCartUI();
         };
 
@@ -369,6 +373,32 @@
             fetch('products.json')
                 .then(response => response.json())
                 .then(products => {
+                    // Populate Featured Highlight
+                    const featured = products.find(p => p.featured === true);
+                    const featSection = document.getElementById('featuredSection');
+                    if (featured && featSection) {
+                        featSection.style.display = 'block';
+                        document.getElementById('featuredTitle').textContent = featured.name;
+                        document.getElementById('featuredDesc').textContent = featured.category + " premium selecionado especialmente para você nesta semana.";
+                        document.getElementById('featuredImg').src = featured.image;
+
+                        const oldPriceEl = document.getElementById('featuredOldPrice');
+                        const priceEl = document.getElementById('featuredPrice');
+                        const btnEl = document.getElementById('featuredBtn');
+
+                        if (featured.sold) {
+                            oldPriceEl.textContent = "R$ ****";
+                            priceEl.textContent = "R$ ****";
+                            btnEl.textContent = "Reservar Oferta";
+                        } else {
+                            oldPriceEl.textContent = featured.oldPrice ? `R$ ${featured.oldPrice.toFixed(2).replace('.', ',')}` : '';
+                            priceEl.textContent = `R$ ${featured.price.toFixed(2).replace('.', ',')}`;
+                            btnEl.textContent = "Garantir Oferta de Destaque";
+                        }
+
+                        btnEl.onclick = () => addToCart(featured.name, featured.price, featured.oldPrice || featured.price, featured.image, featured.sold || false);
+                    }
+
                     const container = document.getElementById('productContainer');
                     if (!container) return;
                     container.innerHTML = '';
@@ -391,6 +421,14 @@
                         `;
                         container.appendChild(card);
                     });
+
+                    // Start timer based on first product with duration
+                    const timedProduct = products.find(p => p.hasTimer && p.timerHours);
+                    if (timedProduct) {
+                        updateTimers(timedProduct.timerHours * 3600);
+                    } else {
+                        updateTimers(2 * 3600);
+                    }
                 });
         }
 

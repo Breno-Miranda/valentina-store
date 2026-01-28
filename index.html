@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- VERSION: V0.11.8 -->
+<!-- VERSION: V0.11.13 -->
 <html lang="pt-BR">
 
 <head>
@@ -370,6 +370,9 @@
             <button class="cart-checkout-btn" onclick="checkoutWhatsApp()">
                 Finalizar no WhatsApp
             </button>
+            <button class="cart-continue-btn" onclick="toggleCart()">
+                Continuar Comprando
+            </button>
         </div>
     </div>
 
@@ -433,11 +436,11 @@
                 let remaining = Math.max(0, Math.floor((endTime - now) / 1000));
 
                 if (remaining <= 0) {
-                    // Optional: Reset timer if it expires or just leave at 00:00:00
-                    // For demo, we'll reset it to show it's working
-                    // let newEnd = Date.now() + (durationInSeconds * 1000);
-                    // setCookie(COOKIE_NAME, newEnd, 1);
-                    // location.reload();
+                    // Reset timer to restart the countdown for the next cycle
+                    const newEnd = Date.now() + (durationInSeconds * 1000);
+                    setCookie(COOKIE_NAME, newEnd, 1);
+                    location.reload();
+                    return;
                 }
 
                 let hours = parseInt(remaining / 3600, 10);
@@ -466,7 +469,6 @@
 
         window.onload = function () {
             loadProducts(); // Load dynamic products
-            updateTimers(2 * 60 * 60); // 2 hours
             updateCartUI(); // Initialize cart UI
         };
 
@@ -479,7 +481,11 @@
                     if (!container) return;
 
                     container.innerHTML = '';
-                    products.forEach(p => {
+
+                    // Filter: Only show featured products on the homepage
+                    const featuredProducts = products.filter(p => p.featured === true);
+
+                    featuredProducts.forEach(p => {
                         const card = document.createElement('div');
                         card.className = `product-card ${p.isSale ? 'product-card--sale' : ''} ${p.sold ? 'product-card--sold' : ''}`;
 
@@ -505,6 +511,14 @@
                         `;
                         container.appendChild(card);
                     });
+
+                    // Start timer based on first featured product with duration
+                    const timedProduct = featuredProducts.find(p => p.hasTimer && p.timerHours);
+                    if (timedProduct) {
+                        updateTimers(timedProduct.timerHours * 3600);
+                    } else {
+                        updateTimers(2 * 3600); // Fallback 2h
+                    }
                 })
                 .catch(err => console.error('Erro ao carregar produtos:', err));
         }
