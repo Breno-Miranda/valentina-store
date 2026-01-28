@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- VERSION: V0.10.42 -->
+<!-- VERSION: V0.11.1 -->
 <html lang="pt-BR">
 
 <head>
@@ -11,25 +11,121 @@
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="assets/favicon-purple.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#634792">
+    <style>
+        /* RESET & CRITICAL OVERRIDES */
+        #pwa-fixed-banner {
+            position: fixed !important;
+            bottom: 30px !important;
+            top: auto !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            background: #634792 !important;
+            color: white !important;
+            z-index: 2147483647 !important;
+            /* Maximum possible z-index */
+            padding: 14px 24px !important;
+            border-radius: 50px !important;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4) !important;
+            display: none;
+            /* Controlled by JS */
+            align-items: center !important;
+            gap: 15px !important;
+            font-family: 'Inter', sans-serif !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        }
+
+        .pwa-close-x {
+            cursor: pointer !important;
+            background: rgba(255, 255, 255, 0.15) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            color: white !important;
+            width: 28px !important;
+            height: 28px !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 14px !important;
+            font-weight: bold !important;
+            transition: 0.2s !important;
+        }
+
+        .pwa-close-x:hover {
+            background: rgba(255, 255, 255, 0.3) !important;
+        }
+
+        .pwa-install-btn {
+            background: white !important;
+            color: #634792 !important;
+            border: none !important;
+            padding: 8px 18px !important;
+            border-radius: 20px !important;
+            font-weight: 700 !important;
+            font-size: 0.85rem !important;
+            cursor: pointer !important;
+        }
+    </style>
     <style>
         .shop-header {
-            padding: 60px 0 40px;
-            background: var(--color-accent);
+            padding: 40px 0;
+            background: #fff;
             text-align: center;
             border-bottom: 1px solid var(--color-border);
         }
 
         .shop-nav {
-            margin-bottom: 3rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: flex-start;
         }
 
         .shop-header .section-title {
-            margin-bottom: 1rem;
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--color-brand), #a855f7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .shop-header .section-subtitle {
             margin-top: 0;
-            margin-bottom: 0;
+            font-size: 1.1rem;
+            opacity: 0.8;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Full width video showcase */
+        .video-showcase--fluid {
+            padding: 0;
+            margin-bottom: 4rem;
+            background: #000;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .video-showcase--fluid .video-container {
+            margin-top: 0;
+            border-radius: 0;
+            aspect-ratio: 21 / 9;
+            /* Ultra-wide cinematic look */
+            width: 100%;
+            max-width: none;
+            box-shadow: none;
+        }
+
+        @media (max-width: 768px) {
+            .video-showcase--fluid .video-container {
+                aspect-ratio: 16 / 9;
+            }
+
+            .shop-header .section-title {
+                font-size: 2.2rem;
+            }
         }
 
         .catalog-container {
@@ -48,16 +144,37 @@
         </div>
     </div>
 
-    <header class="shop-header">
-        <div class="container">
-            <nav class="shop-nav">
-                <a href="index.html" class="btn btn--secondary">← Voltar para o Início</a>
-            </nav>
-
-            <h1 class="section-title">Nossa Vitrine Digital</h1>
-            <p class="section-subtitle">Explore todo o nosso catálogo de produtos Natura e Eudora em um só lugar.</p>
+    <section class="video-showcase--fluid">
+        <div class="video-container">
+            <div id="player"></div>
         </div>
-    </header>
+    </section>
+
+    <section class="info-block">
+        <div class="container info-block__container">
+            <div class="info-block__content">
+                <span class="product-card__tag" style="margin-bottom: 1rem; display: inline-block;">Destaque da
+                    Semana</span>
+                <h2 class="section-title text-left" style="margin-bottom: 1rem;">Kaiak Oceano</h2>
+                <p>
+                    O frescor das profundezas do oceano agora ao seu alcance. Com notas marinhas e revigorantes, é a
+                    escolha perfeita para quem busca sofisticação no dia a dia.
+                </p>
+                <div class="product-card__price-wrapper" style="margin: 1.5rem 0;">
+                    <span class="price-old">R$ 189,90</span>
+                    <p class="product-card__price">R$ 159,99</p>
+                </div>
+                <button class="btn btn--primary"
+                    onclick="addToCart('Kaiak Oceano Masculino 100 ml', 159.99, 189.90, 'assets/kaiak-oceano-final.png')">
+                    Garantir Oferta de Destaque
+                </button>
+            </div>
+            <div class="info-block__image">
+                <img src="assets/kaiak-oceano-final.png" alt="Produto de Destaque" class="focus-image"
+                    style="max-height: 400px;">
+            </div>
+        </div>
+    </section>
 
     <main class="catalog-container">
         <div class="container">
@@ -154,8 +271,51 @@
         </svg>
     </div>
 
+    <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        // --- SHARED LOGIC ---
+        var player;
+        var videoList = [];
+        var currentVideoIndex = 0;
+
+        function onYouTubeIframeAPIReady() {
+            fetch('videos.json')
+                .then(response => response.json())
+                .then(videos => {
+                    videoList = videos;
+                    initPlayer();
+                })
+                .catch(err => {
+                    videoList = ['ZcLY_yC_-w4'];
+                    initPlayer();
+                });
+        }
+
+        function initPlayer() {
+            player = new YT.Player('player', {
+                height: '100%',
+                width: '100%',
+                videoId: videoList[currentVideoIndex],
+                playerVars: {
+                    'autoplay': 1,
+                    'controls': 0,
+                    'mute': 1,
+                    'playsinline': 1,
+                    'rel': 0,
+                    'modestbranding': 1,
+                    'iv_load_policy': 3
+                },
+                events: {
+                    'onReady': (e) => { e.target.playVideo(); e.target.setVolume(15); e.target.unMute(); },
+                    'onStateChange': (e) => {
+                        if (e.data === YT.PlayerState.ENDED) {
+                            currentVideoIndex = (currentVideoIndex + 1) % videoList.length;
+                            player.loadVideoById(videoList[currentVideoIndex]);
+                        }
+                    }
+                }
+            });
+        }
+
         function updateTimers(durationInSeconds) {
             const COOKIE_NAME = "rev_timer_end";
             function getEndTime() {
@@ -265,14 +425,14 @@
             cart.forEach(item => {
                 sub += item.oldPrice; tot += item.price; disc += (item.oldPrice - item.price);
                 itemsCont.innerHTML += `
-                    <div class="cart-item">
-                        <img src="${item.img}" class="cart-item__img">
-                        <div class="cart-item__info">
-                            <h4>${item.name}</h4>
-                            <p class="cart-item__price">R$ ${item.price.toFixed(2).replace('.', ',')}</p>
-                        </div>
-                        <span class="cart-item__remove" onclick="removeFromCart(${item.id})">&times;</span>
-                    </div>`;
+        <div class="cart-item">
+            <img src="${item.img}" class="cart-item__img">
+                <div class="cart-item__info">
+                    <h4>${item.name}</h4>
+                    <p class="cart-item__price">R$ ${item.price.toFixed(2).replace('.', ',')}</p>
+                </div>
+                <span class="cart-item__remove" onclick="removeFromCart(${item.id})">&times;</span>
+        </div>`;
             });
             document.getElementById('cartSubtotal').textContent = `R$ ${sub.toFixed(2).replace('.', ',')}`;
             document.getElementById('cartDiscount').textContent = `- R$ ${disc.toFixed(2).replace('.', ',')}`;
@@ -290,13 +450,98 @@
             msg += `\n*Total: R$ ${tot.toFixed(2).replace('.', ',')}*\n*Economia: R$ ${disc.toFixed(2).replace('.', ',')}*`;
             window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
         }
-        function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+        // --- SCROLL TO TOP LOGIC ---
+        const scrollTopBtn = document.getElementById('scrollTopBtn');
         window.onscroll = function () {
-            const btn = document.getElementById('scrollTopBtn');
-            if (document.documentElement.scrollTop > 400) btn.classList.add('scroll-to-top--active');
-            else btn.classList.remove('scroll-to-top--active');
+            if (document.documentElement.scrollTop > 400) scrollTopBtn.classList.add('scroll-to-top--active');
+            else scrollTopBtn.classList.remove('scroll-to-top--active');
         };
+        function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+        // --- PWA & COOKIE LOGIC ---
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('SW registrado'))
+                .catch(err => console.log('Erro SW', err));
+        }
+
+        function acceptCookies() {
+            localStorage.setItem('cookies_accepted', 'true');
+            document.getElementById('cookieConsent').style.display = 'none';
+        }
+
+        function declineCookies() {
+            sessionStorage.setItem('cookies_declined', 'true');
+            document.getElementById('cookieConsent').style.display = 'none';
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (!localStorage.getItem('cookies_accepted') && !sessionStorage.getItem('cookies_declined')) {
+                document.getElementById('cookieConsent').style.display = 'flex';
+            }
+        });
+
+        function dismissInstall() {
+            const el = document.getElementById('pwa-fixed-banner');
+            if (el) el.style.display = 'none';
+            // Gravação definitiva no localStorage 
+            localStorage.setItem('pwa_banner_dismissed', Date.now());
+        }
+
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+
+            // Só mostra se nunca foi fechado ou se o fechamento foi há mais de 7 dias
+            const lastDismissed = localStorage.getItem('pwa_banner_dismissed');
+            const sevenDays = 7 * 24 * 60 * 60 * 1000;
+
+            if (!lastDismissed || (Date.now() - lastDismissed > sevenDays)) {
+                const promptEl = document.getElementById('pwa-fixed-banner');
+                if (promptEl) {
+                    promptEl.style.display = 'flex';
+                    // Auto-hide após 1 minuto
+                    setTimeout(() => {
+                        if (promptEl && promptEl.style.display === 'flex') {
+                            promptEl.style.display = 'none';
+                        }
+                    }, 60000);
+                }
+            }
+        });
+
+        document.getElementById('installBtn')?.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    dismissInstall();
+                }
+                deferredPrompt = null;
+            }
+        });
     </script>
+
+    <!-- PWA INSTALL PROMPT REVISADO -->
+    <div id="pwa-fixed-banner">
+        <span style="font-weight: 600; font-size: 0.95rem;">Instalar ValentinaStore no seu celular?</span>
+        <div style="display: flex; gap: 12px; align-items: center;">
+            <button class="pwa-install-btn" id="installBtn">Instalar</button>
+            <button class="pwa-close-x" onclick="dismissInstall()">✕</button>
+        </div>
+    </div>
+
+    <!-- COOKIE CONSENT -->
+    <div id="cookieConsent" class="cookie-consent" style="display: none;">
+        <p>Nós usamos cookies para melhorar sua experiência. Ao continuar, você concorda com nossos <a
+                href="privacy.html">termos de uso</a>.</p>
+        <div class="cookie-btn-group">
+            <button class="btn btn--primary btn--sm" onclick="acceptCookies()">Aceitar</button>
+            <button class="btn btn--secondary btn--sm" onclick="declineCookies()">Recusar</button>
+        </div>
+    </div>
 </body>
 
 </html>

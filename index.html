@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- VERSION: V0.10.41 -->
+<!-- VERSION: V0.11.1 -->
 <html lang="pt-BR">
 
 <head>
@@ -11,6 +11,62 @@
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="assets/favicon-purple.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#634792">
+    <style>
+        /* RESET & CRITICAL OVERRIDES */
+        #pwa-fixed-banner {
+            position: fixed !important;
+            bottom: 30px !important;
+            top: auto !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            background: #634792 !important;
+            color: white !important;
+            z-index: 2147483647 !important;
+            /* Maximum possible z-index */
+            padding: 14px 24px !important;
+            border-radius: 50px !important;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4) !important;
+            display: none;
+            /* Controlled by JS */
+            align-items: center !important;
+            gap: 15px !important;
+            font-family: 'Inter', sans-serif !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        }
+
+        .pwa-close-x {
+            cursor: pointer !important;
+            background: rgba(255, 255, 255, 0.15) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            color: white !important;
+            width: 28px !important;
+            height: 28px !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 14px !important;
+            font-weight: bold !important;
+            transition: 0.2s !important;
+        }
+
+        .pwa-close-x:hover {
+            background: rgba(255, 255, 255, 0.3) !important;
+        }
+
+        .pwa-install-btn {
+            background: white !important;
+            color: #634792 !important;
+            border: none !important;
+            padding: 8px 18px !important;
+            border-radius: 20px !important;
+            font-weight: 700 !important;
+            font-size: 0.85rem !important;
+            cursor: pointer !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -70,20 +126,37 @@
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
         var player;
+        var videoList = [];
+        var currentVideoIndex = 0;
+
         function onYouTubeIframeAPIReady() {
+            fetch('videos.json')
+                .then(response => response.json())
+                .then(videos => {
+                    videoList = videos;
+                    initPlayer();
+                })
+                .catch(err => {
+                    console.error('Erro ao carregar vídeos:', err);
+                    // Fallback se o JSON falhar
+                    videoList = ['ZcLY_yC_-w4'];
+                    initPlayer();
+                });
+        }
+
+        function initPlayer() {
             player = new YT.Player('player', {
                 height: '100%',
                 width: '100%',
-                videoId: 'ZcLY_yC_-w4',
+                videoId: videoList[currentVideoIndex],
                 playerVars: {
                     'autoplay': 1,
                     'controls': 0,
-                    'loop': 1,
-                    'playlist': 'ZcLY_yC_-w4',
-                    'mute': 1, // Start muted for autoplay
+                    'mute': 1,
                     'playsinline': 1,
                     'rel': 0,
-                    'modestbranding': 1
+                    'modestbranding': 1,
+                    'iv_load_policy': 3
                 },
                 events: {
                     'onReady': onPlayerReady,
@@ -94,14 +167,18 @@
 
         function onPlayerStateChange(event) {
             if (event.data === YT.PlayerState.ENDED) {
-                player.playVideo();
+                currentVideoIndex++;
+                if (currentVideoIndex >= videoList.length) {
+                    currentVideoIndex = 0;
+                }
+                player.loadVideoById(videoList[currentVideoIndex]);
             }
         }
 
         function onPlayerReady(event) {
             event.target.playVideo();
-            event.target.setVolume(15); // Low volume as requested
-            event.target.unMute();     // Unmute after start
+            event.target.setVolume(15);
+            event.target.unMute();
         }
     </script>
 
@@ -537,7 +614,6 @@
 
         // --- SCROLL TO TOP LOGIC ---
         const scrollTopBtn = document.getElementById('scrollTopBtn');
-
         window.onscroll = function () {
             if (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) {
                 scrollTopBtn.classList.add('scroll-to-top--active');
@@ -545,14 +621,100 @@
                 scrollTopBtn.classList.remove('scroll-to-top--active');
             }
         };
-
         function scrollToTop() {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+
+        // --- PWA & COOKIE LOGIC ---
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('SW registrado'))
+                .catch(err => console.log('Erro SW', err));
+        }
+
+        function acceptCookies() {
+            localStorage.setItem('cookies_accepted', 'true');
+            document.getElementById('cookieConsent').style.display = 'none';
+        }
+
+        function declineCookies() {
+            sessionStorage.setItem('cookies_declined', 'true');
+            document.getElementById('cookieConsent').style.display = 'none';
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (!localStorage.getItem('cookies_accepted') && !sessionStorage.getItem('cookies_declined')) {
+                document.getElementById('cookieConsent').style.display = 'flex';
+            }
+        });
+
+        function dismissInstall() {
+            const el = document.getElementById('pwa-fixed-banner');
+            if (el) el.style.display = 'none';
+            // Gravação definitiva no localStorage para não incomodar mais por 30 dias
+            localStorage.setItem('pwa_banner_dismissed', Date.now());
+        }
+
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+
+            // Só mostra se nunca foi fechado ou se o fechamento foi há mais de 7 dias
+            const lastDismissed = localStorage.getItem('pwa_banner_dismissed');
+            const sevenDays = 7 * 24 * 60 * 60 * 1000;
+
+            if (!lastDismissed || (Date.now() - lastDismissed > sevenDays)) {
+                const promptEl = document.getElementById('pwa-fixed-banner');
+                if (promptEl) {
+                    promptEl.style.display = 'flex';
+                    // Auto-hide após 1 minuto para não poluir
+                    setTimeout(() => {
+                        if (promptEl && promptEl.style.display === 'flex') {
+                            promptEl.style.display = 'none';
+                        }
+                    }, 60000);
+                }
+            }
+        });
+
+        document.getElementById('installBtn')?.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    dismissInstall();
+                }
+                deferredPrompt = null;
+            }
+        });
     </script>
+
+    <!-- PWA INSTALL PROMPT REVISADO -->
+    <div id="pwa-fixed-banner">
+        <span style="font-weight: 600; font-size: 0.95rem;">Instalar ValentinaStore no seu celular?</span>
+        <div style="display: flex; gap: 12px; align-items: center;">
+            <button class="pwa-install-btn" id="installBtn">Instalar</button>
+            <button class="pwa-close-x" onclick="dismissInstall()">✕</button>
+        </div>
+    </div>
+
+    <div class="scroll-to-top" id="scrollTopBtn" onclick="scrollToTop()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m18 15-6-6-6 6" />
+        </svg>
+    </div>
+
+    <!-- COOKIE CONSENT -->
+    <div id="cookieConsent" class="cookie-consent" style="display: none;">
+        <p>Nós usamos cookies para melhorar sua experiência. Ao continuar, você concorda com nossos <a
+                href="privacy.html">termos de uso</a>.</p>
+        <div class="cookie-btn-group">
+            <button class="btn btn--primary btn--sm" onclick="acceptCookies()">Aceitar</button>
+            <button class="btn btn--secondary btn--sm" onclick="declineCookies()">Recusar</button>
+        </div>
+    </div>
 </body>
 
 </html>

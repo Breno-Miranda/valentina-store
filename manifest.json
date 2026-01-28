@@ -1,0 +1,17 @@
+{
+    "name": "ValentinaStore - Boutique Digital",
+    "short_name": "ValentinaStore",
+    "description": "Revista Digital de Preços Natura e Eudora",
+    "start_url": "/valentinaStore/index.html",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#634792",
+    "icons": [
+        {
+            "src": "assets/favicon-purple.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}
