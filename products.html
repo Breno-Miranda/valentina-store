@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- VERSION: V0.11.1 -->
+<!-- VERSION: V0.11.8 -->
 <html lang="pt-BR">
 
 <head>
@@ -374,7 +374,7 @@
                     container.innerHTML = '';
                     products.forEach(p => {
                         const card = document.createElement('div');
-                        card.className = `product-card ${p.isSale ? 'product-card--sale' : ''}`;
+                        card.className = `product-card ${p.isSale ? 'product-card--sale' : ''} ${p.sold ? 'product-card--sold' : ''}`;
                         card.innerHTML = `
                             ${p.badge ? `<div class="product-card__badge">${p.badge}</div>` : ''}
                             <div class="product-card__img-wrapper">
@@ -384,10 +384,10 @@
                             <span class="product-card__tag">${p.category}</span>
                             <h3 class="product-card__title">${p.name}</h3>
                             <div class="product-card__price-wrapper">
-                                ${p.oldPrice ? `<span class="price-old">R$ ${p.oldPrice.toFixed(2).replace('.', ',')}</span>` : ''}
-                                <p class="product-card__price">R$ ${p.price.toFixed(2).replace('.', ',')}</p>
+                                ${p.oldPrice ? `<span class="price-old">${p.sold ? 'R$ ****' : `R$ ${p.oldPrice.toFixed(2).replace('.', ',')}`}</span>` : ''}
+                                <p class="product-card__price">${p.sold ? 'R$ ****' : `R$ ${p.price.toFixed(2).replace('.', ',')}`}</p>
                             </div>
-                            <button class="btn btn--primary" onclick="addToCart('${p.name}', ${p.price}, ${p.oldPrice || p.price}, '${p.image}')">Adicionar</button>
+                            <button class="btn btn--primary" onclick="addToCart('${p.name}', ${p.price}, ${p.oldPrice || p.price}, '${p.image}', ${p.sold || false})">${p.sold ? 'Reservar' : 'Adicionar'}</button>
                         `;
                         container.appendChild(card);
                     });
@@ -399,8 +399,8 @@
             document.getElementById('cartModal').classList.toggle('cart-modal--active');
             document.getElementById('cartOverlay').classList.toggle('cart-overlay--active');
         }
-        function addToCart(name, price, oldPrice, img) {
-            cart.push({ name, price, oldPrice, img, id: Date.now() });
+        function addToCart(name, price, oldPrice, img, sold = false) {
+            cart.push({ name, price, oldPrice, img, id: Date.now(), sold });
             localStorage.setItem('valentinastore_cart', JSON.stringify(cart));
             updateCartUI();
             if (!document.getElementById('cartModal').classList.contains('cart-modal--active')) toggleCart();
@@ -423,20 +423,22 @@
             let sub = 0, tot = 0, disc = 0;
             itemsCont.innerHTML = '';
             cart.forEach(item => {
-                sub += item.oldPrice; tot += item.price; disc += (item.oldPrice - item.price);
+                if (!item.sold) {
+                    sub += item.oldPrice; tot += item.price; disc += (item.oldPrice - item.price);
+                }
                 itemsCont.innerHTML += `
-        <div class="cart-item">
+        <div class="cart-item ${item.sold ? 'cart-item--sold' : ''}">
             <img src="${item.img}" class="cart-item__img">
                 <div class="cart-item__info">
                     <h4>${item.name}</h4>
-                    <p class="cart-item__price">R$ ${item.price.toFixed(2).replace('.', ',')}</p>
+                    <p class="cart-item__price">${item.sold ? 'R$ ****' : `R$ ${item.price.toFixed(2).replace('.', ',')}`}</p>
                 </div>
                 <span class="cart-item__remove" onclick="removeFromCart(${item.id})">&times;</span>
         </div>`;
             });
-            document.getElementById('cartSubtotal').textContent = `R$ ${sub.toFixed(2).replace('.', ',')}`;
+            document.getElementById('cartSubtotal').textContent = sub > 0 ? `R$ ${sub.toFixed(2).replace('.', ',')}` : 'R$ ****';
             document.getElementById('cartDiscount').textContent = `- R$ ${disc.toFixed(2).replace('.', ',')}`;
-            document.getElementById('cartTotal').textContent = `R$ ${tot.toFixed(2).replace('.', ',')}`;
+            document.getElementById('cartTotal').textContent = tot > 0 ? `R$ ${tot.toFixed(2).replace('.', ',')}` : 'R$ ****';
         }
         function checkoutWhatsApp() {
             if (cart.length === 0) return;
@@ -444,11 +446,21 @@
             let msg = "*Novo Pedido - ValentinaStore*\nOlá, gostaria de falar com a consultora *Anizia Silva*.\n\n";
             let tot = 0, disc = 0;
             cart.forEach((item, i) => {
-                msg += `${i + 1}. *${item.name}* (R$ ${item.price.toFixed(2).replace('.', ',')})\n`;
-                tot += item.price; disc += (item.oldPrice - item.price);
+                const priceFormatted = item.sold ? "****" : `R$ ${item.price.toFixed(2).replace('.', ',')}`;
+                msg += `${i + 1}. *${item.name}* (${item.sold ? 'RESERVADO - ' : ''}${priceFormatted})\n`;
+                if (!item.sold) {
+                    tot += item.price;
+                    disc += (item.oldPrice - item.price);
+                }
             });
-            msg += `\n*Total: R$ ${tot.toFixed(2).replace('.', ',')}*\n*Economia: R$ ${disc.toFixed(2).replace('.', ',')}*`;
+            msg += `\n*Total estimado: R$ ${tot.toFixed(2).replace('.', ',')}*\n`;
+            if (disc > 0) msg += `*Economia: R$ ${disc.toFixed(2).replace('.', ',')}*\n`;
+            msg += `\n_Nota: Itens reservados terão o preço e disponibilidade confirmados pela consultora._`;
             window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+            cart = [];
+            localStorage.setItem('valentinastore_cart', JSON.stringify(cart));
+            updateCartUI();
+            toggleCart();
         }
 
         // --- SCROLL TO TOP LOGIC ---
@@ -512,15 +524,17 @@
             }
         });
 
-        document.getElementById('installBtn')?.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    dismissInstall();
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('installBtn')?.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        dismissInstall();
+                    }
+                    deferredPrompt = null;
                 }
-                deferredPrompt = null;
-            }
+            });
         });
     </script>
 
@@ -539,7 +553,7 @@
                 href="privacy.html">termos de uso</a>.</p>
         <div class="cookie-btn-group">
             <button class="btn btn--primary btn--sm" onclick="acceptCookies()">Aceitar</button>
-            <button class="btn btn--secondary btn--sm" onclick="declineCookies()">Recusar</button>
+            <button class="btn btn--secondary btn--sm" onclick="declineCookies()">Não Aceito</button>
         </div>
     </div>
 </body>

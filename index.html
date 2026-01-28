@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- VERSION: V0.11.1 -->
+<!-- VERSION: V0.11.8 -->
 <html lang="pt-BR">
 
 <head>
@@ -481,7 +481,7 @@
                     container.innerHTML = '';
                     products.forEach(p => {
                         const card = document.createElement('div');
-                        card.className = `product-card ${p.isSale ? 'product-card--sale' : ''}`;
+                        card.className = `product-card ${p.isSale ? 'product-card--sale' : ''} ${p.sold ? 'product-card--sold' : ''}`;
 
                         card.innerHTML = `
                             ${p.badge ? `<div class="product-card__badge">${p.badge}</div>` : ''}
@@ -496,11 +496,11 @@
                             <span class="product-card__tag">${p.category}</span>
                             <h3 class="product-card__title">${p.name}</h3>
                             <div class="product-card__price-wrapper">
-                                ${p.oldPrice ? `<span class="price-old">R$ ${p.oldPrice.toFixed(2).replace('.', ',')}</span>` : ''}
-                                <p class="product-card__price">R$ ${p.price.toFixed(2).replace('.', ',')}</p>
+                                ${p.oldPrice ? `<span class="price-old">${p.sold ? 'R$ ****' : `R$ ${p.oldPrice.toFixed(2).replace('.', ',')}`}</span>` : ''}
+                                <p class="product-card__price">${p.sold ? 'R$ ****' : `R$ ${p.price.toFixed(2).replace('.', ',')}`}</p>
                             </div>
-                            <button class="btn btn--primary" onclick="addToCart('${p.name}', ${p.price}, ${p.oldPrice || p.price}, '${p.image}')">
-                                Adicionar
+                            <button class="btn btn--primary" onclick="addToCart('${p.name}', ${p.price}, ${p.oldPrice || p.price}, '${p.image}', ${p.sold || false})">
+                                ${p.sold ? 'Reservar' : 'Adicionar'}
                             </button>
                         `;
                         container.appendChild(card);
@@ -517,8 +517,8 @@
             document.getElementById('cartOverlay').classList.toggle('cart-overlay--active');
         }
 
-        function addToCart(name, price, oldPrice, img) {
-            const item = { name, price, oldPrice, img, id: Date.now() };
+        function addToCart(name, price, oldPrice, img, sold = false) {
+            const item = { name, price, oldPrice, img, id: Date.now(), sold };
             cart.push(item);
             saveCart();
             updateCartUI();
@@ -563,17 +563,19 @@
 
             cartItemsContainer.innerHTML = '';
             cart.forEach(item => {
-                subtotal += item.oldPrice;
-                total += item.price;
-                discount += (item.oldPrice - item.price);
+                if (!item.sold) {
+                    subtotal += item.oldPrice;
+                    total += item.price;
+                    discount += (item.oldPrice - item.price);
+                }
 
                 const itemHtml = `
-                    <div class="cart-item">
+                    <div class="cart-item ${item.sold ? 'cart-item--sold' : ''}">
                         <img src="${item.img}" alt="${item.name}" class="cart-item__img">
                         <div class="cart-item__info">
                             <h4>${item.name}</h4>
-                            <p class="cart-item__price">R$ ${item.price.toFixed(2).replace('.', ',')}</p>
-                            ${item.oldPrice > item.price ? `<p class="cart-item__discount">Economia de R$ ${(item.oldPrice - item.price).toFixed(2).replace('.', ',')}</p>` : ''}
+                            <p class="cart-item__price">${item.sold ? 'R$ ****' : `R$ ${item.price.toFixed(2).replace('.', ',')}`}</p>
+                            ${(!item.sold && item.oldPrice > item.price) ? `<p class="cart-item__discount">Economia de R$ ${(item.oldPrice - item.price).toFixed(2).replace('.', ',')}</p>` : ''}
                         </div>
                         <span class="cart-item__remove" onclick="removeFromCart(${item.id})">&times;</span>
                     </div>
@@ -581,9 +583,9 @@
                 cartItemsContainer.innerHTML += itemHtml;
             });
 
-            cartSubtotalLabel.textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
-            cartDiscountLabel.textContent = `- R$ ${discount.toFixed(2).replace('.', ',')}`;
-            cartTotalLabel.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+            cartSubtotalLabel.textContent = subtotal > 0 ? `R$ ${subtotal.toFixed(2).replace('.', ',')}` : 'R$ ****';
+            cartDiscountLabel.textContent = discount > 0 ? `- R$ ${discount.toFixed(2).replace('.', ',')}` : '- R$ 0,00';
+            cartTotalLabel.textContent = total > 0 ? `R$ ${total.toFixed(2).replace('.', ',')}` : 'R$ ****';
         }
 
         function checkoutWhatsApp() {
@@ -597,19 +599,27 @@
             let discount = 0;
 
             cart.forEach((item, index) => {
-                message += `${index + 1}. *${item.name}*\n`;
-                message += `   Preço: R$ ${item.price.toFixed(2).replace('.', ',')}\n\n`;
-                total += item.price;
-                discount += (item.oldPrice - item.price);
+                const priceFormatted = item.sold ? "****" : `R$ ${item.price.toFixed(2).replace('.', ',')}`;
+                message += `${index + 1}. *${item.name}* (${item.sold ? 'RESERVADO - ' : ''}${priceFormatted})\n`;
+                if (!item.sold) {
+                    total += item.price;
+                    discount += (item.oldPrice - item.price);
+                }
             });
 
             message += `---------------------------\n`;
-            message += `*Total do Pedido: R$ ${total.toFixed(2).replace('.', ',')}*\n`;
-            message += `*Economia de: R$ ${discount.toFixed(2).replace('.', ',')}*\n\n`;
-            message += `Gostaria de finalizar meu pedido!`;
+            message += `*Total estimado: R$ ${total.toFixed(2).replace('.', ',')}*\n`;
+            if (discount > 0) message += `*Economia ref. itens disponíveis: R$ ${discount.toFixed(2).replace('.', ',')}*\n`;
+            message += `\n_Nota: Itens reservados terão o preço e disponibilidade confirmados pela consultora._`;
 
             const encodedMessage = encodeURIComponent(message);
             window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+
+            // Limpar sacola após finalizar
+            cart = [];
+            saveCart();
+            updateCartUI();
+            toggleCart(); // Opcional: fecha a sacola
         }
 
         // --- SCROLL TO TOP LOGIC ---
@@ -678,15 +688,17 @@
             }
         });
 
-        document.getElementById('installBtn')?.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    dismissInstall();
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('installBtn')?.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        dismissInstall();
+                    }
+                    deferredPrompt = null;
                 }
-                deferredPrompt = null;
-            }
+            });
         });
     </script>
 
@@ -712,7 +724,7 @@
                 href="privacy.html">termos de uso</a>.</p>
         <div class="cookie-btn-group">
             <button class="btn btn--primary btn--sm" onclick="acceptCookies()">Aceitar</button>
-            <button class="btn btn--secondary btn--sm" onclick="declineCookies()">Recusar</button>
+            <button class="btn btn--secondary btn--sm" onclick="declineCookies()">Não Aceito</button>
         </div>
     </div>
 </body>
