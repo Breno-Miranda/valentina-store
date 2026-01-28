@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<!-- VERSION: V0.10.42 -->
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vitrine de Produtos | ValentinaStore - Boutique Digital</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="assets/favicon-purple.png">
+    <style>
+        .shop-header {
+            padding: 60px 0 40px;
+            background: var(--color-accent);
+            text-align: center;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .shop-nav {
+            margin-bottom: 3rem;
+        }
+
+        .shop-header .section-title {
+            margin-bottom: 1rem;
+        }
+
+        .shop-header .section-subtitle {
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        .catalog-container {
+            padding: 60px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="flash-sale-banner">
+        <div class="container flash-sale-container">
+            <span class="flash-sale-text">Preços e Ofertas Exclusivas</span>
+            <div id="countdown" class="countdown-timer">
+                <span id="timer-hours">00</span>:<span id="timer-minutes">00</span>:<span id="timer-seconds">00</span>
+            </div>
+        </div>
+    </div>
+
+    <header class="shop-header">
+        <div class="container">
+            <nav class="shop-nav">
+                <a href="index.html" class="btn btn--secondary">← Voltar para o Início</a>
+            </nav>
+
+            <h1 class="section-title">Nossa Vitrine Digital</h1>
+            <p class="section-subtitle">Explore todo o nosso catálogo de produtos Natura e Eudora em um só lugar.</p>
+        </div>
+    </header>
+
+    <main class="catalog-container">
+        <div class="container">
+            <div class="product-grid" id="productContainer">
+                <!-- Products will be loaded from products.json -->
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-brand" style="margin-bottom: 1.5rem;">
+                <div class="brand-logo-text brand-logo-text--footer" style="justify-content: center;">
+                    <span class="logo-text">ValentinaStore</span>
+                </div>
+            </div>
+            <p class="footer__copy">© 2026 ValentinaStore. Todos os direitos reservados.</p>
+            <div class="footer__links">
+                <a href="terms.html">Termos de Uso</a>
+                <a href="privacy.html">Política de Privacidade</a>
+            </div>
+            <div class="footer__security">
+                <div class="security-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                    <span>Ambiente 100% Seguro</span>
+                </div>
+                <div class="security-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    <span>Compra Protegida via WhatsApp</span>
+                </div>
+                <div class="security-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span>Produtos Originais</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- CART ELEMENTS -->
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-header">
+            <h3 class="cart-title">Minha Sacola</h3>
+            <span class="cart-close" onclick="toggleCart()">&times;</span>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <!-- Items injectados via JS -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-summary">
+                <div class="cart-summary-item">
+                    <span>Subtotal:</span>
+                    <span id="cartSubtotal">R$ 0,00</span>
+                </div>
+                <div class="cart-summary-item cart-summary-item--discount">
+                    <span>Desconto Total:</span>
+                    <span id="cartDiscount">- R$ 0,00</span>
+                </div>
+                <div class="cart-summary-total">
+                    <span>Total:</span>
+                    <span id="cartTotal">R$ 0,00</span>
+                </div>
+            </div>
+            <button class="cart-checkout-btn" onclick="checkoutWhatsApp()">
+                Finalizar no WhatsApp
+            </button>
+        </div>
+    </div>
+
+    <div class="cart-floating-btn" onclick="toggleCart()">
+        <span class="cart-count" id="cartCount">0</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
+            <path d="M3 6h18"></path>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+        </svg>
+    </div>
+
+    <div class="scroll-to-top" id="scrollTopBtn" onclick="scrollToTop()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m18 15-6-6-6 6" />
+        </svg>
+    </div>
+
+    <script>
+        // --- SHARED LOGIC ---
+        function updateTimers(durationInSeconds) {
+            const COOKIE_NAME = "rev_timer_end";
+            function getEndTime() {
+                let endTime = getCookie(COOKIE_NAME);
+                if (!endTime) {
+                    endTime = Date.now() + (durationInSeconds * 1000);
+                    setCookie(COOKIE_NAME, endTime, 1);
+                }
+                return parseInt(endTime);
+            }
+            function setCookie(name, value, days) {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/`;
+            }
+            function getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+            }
+            const endTime = getEndTime();
+            function tick() {
+                const now = Date.now();
+                const remaining = Math.max(0, Math.floor((endTime - now) / 1000));
+                let hours = parseInt(remaining / 3600, 10);
+                let minutes = parseInt((remaining % 3600) / 60, 10);
+                let seconds = parseInt(remaining % 60, 10);
+                let hStr = hours < 10 ? "0" + hours : hours;
+                let mStr = minutes < 10 ? "0" + minutes : minutes;
+                let sStr = seconds < 10 ? "0" + seconds : seconds;
+                const bannerHours = document.getElementById('timer-hours');
+                const bannerMinutes = document.getElementById('timer-minutes');
+                const bannerSeconds = document.getElementById('timer-seconds');
+                if (bannerHours) bannerHours.textContent = hStr;
+                if (bannerMinutes) bannerMinutes.textContent = mStr;
+                if (bannerSeconds) bannerSeconds.textContent = sStr;
+                const cardTimers = document.querySelectorAll('.js-timer');
+                cardTimers.forEach(el => el.textContent = `${hStr}:${mStr}:${sStr}`);
+            }
+            tick();
+            setInterval(tick, 1000);
+        }
+
+        window.onload = function () {
+            loadProducts();
+            updateTimers(2 * 60 * 60);
+            updateCartUI();
+        };
+
+        function loadProducts() {
+            fetch('products.json')
+                .then(response => response.json())
+                .then(products => {
+                    const container = document.getElementById('productContainer');
+                    if (!container) return;
+                    container.innerHTML = '';
+                    products.forEach(p => {
+                        const card = document.createElement('div');
+                        card.className = `product-card ${p.isSale ? 'product-card--sale' : ''}`;
+                        card.innerHTML = `
+                            ${p.badge ? `<div class="product-card__badge">${p.badge}</div>` : ''}
+                            <div class="product-card__img-wrapper">
+                                <img src="${p.image}" alt="${p.name}" class="product-card__img">
+                            </div>
+                            ${p.hasTimer ? `<div class="product-card__timer-mini">Termina em: <span class="js-timer">00:00:00</span></div>` : ''}
+                            <span class="product-card__tag">${p.category}</span>
+                            <h3 class="product-card__title">${p.name}</h3>
+                            <div class="product-card__price-wrapper">
+                                ${p.oldPrice ? `<span class="price-old">R$ ${p.oldPrice.toFixed(2).replace('.', ',')}</span>` : ''}
+                                <p class="product-card__price">R$ ${p.price.toFixed(2).replace('.', ',')}</p>
+                            </div>
+                            <button class="btn btn--primary" onclick="addToCart('${p.name}', ${p.price}, ${p.oldPrice || p.price}, '${p.image}')">Adicionar</button>
+                        `;
+                        container.appendChild(card);
+                    });
+                });
+        }
+
+        let cart = JSON.parse(localStorage.getItem('valentinastore_cart')) || [];
+        function toggleCart() {
+            document.getElementById('cartModal').classList.toggle('cart-modal--active');
+            document.getElementById('cartOverlay').classList.toggle('cart-overlay--active');
+        }
+        function addToCart(name, price, oldPrice, img) {
+            cart.push({ name, price, oldPrice, img, id: Date.now() });
+            localStorage.setItem('valentinastore_cart', JSON.stringify(cart));
+            updateCartUI();
+            if (!document.getElementById('cartModal').classList.contains('cart-modal--active')) toggleCart();
+        }
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            localStorage.setItem('valentinastore_cart', JSON.stringify(cart));
+            updateCartUI();
+        }
+        function updateCartUI() {
+            const itemsCont = document.getElementById('cartItems');
+            document.getElementById('cartCount').textContent = cart.length;
+            if (cart.length === 0) {
+                itemsCont.innerHTML = '<div class="empty-cart-msg">Sua sacola está vazia</div>';
+                document.getElementById('cartSubtotal').textContent = 'R$ 0,00';
+                document.getElementById('cartDiscount').textContent = '- R$ 0,00';
+                document.getElementById('cartTotal').textContent = 'R$ 0,00';
+                return;
+            }
+            let sub = 0, tot = 0, disc = 0;
+            itemsCont.innerHTML = '';
+            cart.forEach(item => {
+                sub += item.oldPrice; tot += item.price; disc += (item.oldPrice - item.price);
+                itemsCont.innerHTML += `
+                    <div class="cart-item">
+                        <img src="${item.img}" class="cart-item__img">
+                        <div class="cart-item__info">
+                            <h4>${item.name}</h4>
+                            <p class="cart-item__price">R$ ${item.price.toFixed(2).replace('.', ',')}</p>
+                        </div>
+                        <span class="cart-item__remove" onclick="removeFromCart(${item.id})">&times;</span>
+                    </div>`;
+            });
+            document.getElementById('cartSubtotal').textContent = `R$ ${sub.toFixed(2).replace('.', ',')}`;
+            document.getElementById('cartDiscount').textContent = `- R$ ${disc.toFixed(2).replace('.', ',')}`;
+            document.getElementById('cartTotal').textContent = `R$ ${tot.toFixed(2).replace('.', ',')}`;
+        }
+        function checkoutWhatsApp() {
+            if (cart.length === 0) return;
+            const phone = "5584987610106";
+            let msg = "*Novo Pedido - ValentinaStore*\nOlá, gostaria de falar com a consultora *Anizia Silva*.\n\n";
+            let tot = 0, disc = 0;
+            cart.forEach((item, i) => {
+                msg += `${i + 1}. *${item.name}* (R$ ${item.price.toFixed(2).replace('.', ',')})\n`;
+                tot += item.price; disc += (item.oldPrice - item.price);
+            });
+            msg += `\n*Total: R$ ${tot.toFixed(2).replace('.', ',')}*\n*Economia: R$ ${disc.toFixed(2).replace('.', ',')}*`;
+            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+        function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        window.onscroll = function () {
+            const btn = document.getElementById('scrollTopBtn');
+            if (document.documentElement.scrollTop > 400) btn.classList.add('scroll-to-top--active');
+            else btn.classList.remove('scroll-to-top--active');
+        };
+    </script>
+</body>
+
+</html>

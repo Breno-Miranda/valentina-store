@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<!-- VERSION: V0.10.41 -->
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ValentinaStore | Boutique Digital</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="assets/favicon-purple.png">
+</head>
+
+<body>
+
+    <div class="flash-sale-banner">
+        <div class="container flash-sale-container">
+            <span class="flash-sale-text">Preços e Ofertas Exclusivas</span>
+            <div id="countdown" class="countdown-timer">
+                <span id="timer-hours">00</span>:<span id="timer-minutes">00</span>:<span id="timer-seconds">00</span>
+            </div>
+        </div>
+    </div>
+
+
+
+    <header class="hero">
+        <div class="container hero__container">
+            <div class="hero__text-col">
+                <div class="brand-logo-text" style="margin-bottom: 2rem;">
+                    <span class="logo-text">ValentinaStore</span>
+                </div>
+                <h1 class="hero__title">O Frescor de <br>Kaiak Oceano.</h1>
+                <p class="hero__subtitle">
+                    Acompanhe as melhores ofertas em Natura e Eudora. Em destaque neste ciclo:
+                    <strong>Kaiak Oceano Masculino 100 ml</strong>, o frescor das profundezas do oceano com um preço
+                    exclusivo.
+                </p>
+
+                <div class="hero__cta-wrapper">
+                    <a href="products.html" class="btn btn--primary btn--block-mobile">Ver Catálogo Completo</a>
+                </div>
+
+
+            </div>
+
+            <div class="hero__img-col">
+                <img src="assets/kaiak-oceano-final.png" alt="Featured Product: Kaiak Oceano Masculino 100 ml"
+                    class="hero__img">
+            </div>
+        </div>
+    </header>
+
+    <section class="video-showcase">
+        <div class="container">
+            <h2 class="section-title">Confira nossos Produtos</h2>
+            <p class="section-subtitle">Acompanhe as últimas novidades e os benefícios exclusivos dos nossos produtos em
+                destaque.</p>
+            <div class="video-container">
+                <!-- YouTube Embed for Showcase -->
+                <div id="player"></div>
+
+
+            </div>
+        </div>
+    </section>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '100%',
+                width: '100%',
+                videoId: 'ZcLY_yC_-w4',
+                playerVars: {
+                    'autoplay': 1,
+                    'controls': 0,
+                    'loop': 1,
+                    'playlist': 'ZcLY_yC_-w4',
+                    'mute': 1, // Start muted for autoplay
+                    'playsinline': 1,
+                    'rel': 0,
+                    'modestbranding': 1
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.ENDED) {
+                player.playVideo();
+            }
+        }
+
+        function onPlayerReady(event) {
+            event.target.playVideo();
+            event.target.setVolume(15); // Low volume as requested
+            event.target.unMute();     // Unmute after start
+        }
+    </script>
+
+    <section class="marketplace-section" id="marketplace">
+        <div class="container">
+            <h2 class="section-title">Destaques da Semana</h2>
+            <p class="section-subtitle">Nossa curadoria especial com as melhores ofertas e produtos selecionados para
+                você.</p>
+
+            <div class="product-grid" id="productContainer">
+                <!-- Products will be loaded from products.json -->
+            </div>
+        </div>
+    </section>
+
+
+
+    <section class="steps section--gray">
+        <div class="container">
+            <h2 class="section-title">Como comprar</h2>
+            <p class="section-subtitle">Siga estes passos simples para garantir seus produtos favoritos com atendimento
+                exclusivo via WhatsApp.</p>
+            <div class="steps__grid">
+                <div class="step-card">
+                    <div class="step-card__num">1</div>
+                    <h3 class="step-card__title">Adicione à Sacola</h3>
+                    <p class="step-card__desc">Escolha seus produtos favoritos e adicione-os à sua sacola para ver seu
+                        desconto total automaticamente.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-card__num">2</div>
+                    <h3 class="step-card__title">Finalize o Pedido</h3>
+                    <p class="step-card__desc">Clique em "Finalizar no WhatsApp" para ser redirecionado com sua lista de
+                        itens pronta.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-card__num">3</div>
+                    <h3 class="step-card__title">Fale com a Consultora</h3>
+                    <p class="step-card__desc">Conclua sua compra falando diretamente com nossa consultora de vendas
+                        para um atendimento personalizado.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="info-block">
+        <div class="container info-block__container">
+            <div class="info-block__content">
+                <h2 class="section-title text-left">Sua Beleza em Foco</h2>
+                <p>
+                    Na ValentinaStore, acreditamos que o autocuidado é essencial. O <strong>Kaiak Oceano</strong> traz a
+                    frescura e a energia das águas em um frasco premium de 100ml, perfeito para quem busca sofisticação
+                    e revigoração.
+                </p>
+                <ul class="check-list">
+                    <li>Produtos 100% Originais</li>
+                    <li>Natura & Eudora</li>
+                    <li>Atendimento Personalizado</li>
+                </ul>
+            </div>
+            <div class="info-block__image">
+                <img src="assets/kaiak-oceano-final.png" alt="Kaiak Oceano ValentinaStore" class="focus-image">
+            </div>
+        </div>
+    </section>
+
+    <section class="faq section--gray">
+        <div class="container">
+            <h2 class="section-title">Perguntas Frequentes</h2>
+            <div class="faq__list">
+                <details class="faq__item">
+                    <summary class="faq__question">Os produtos são originais?</summary>
+                    <div class="faq__answer">Sim! Todos os nossos produtos das marcas <strong>Natura</strong> e
+                        <strong>Eudora</strong> são originais, lacrados e enviados com nota fiscal. Garantimos a
+                        autenticidade total de cada item.
+                    </div>
+                </details>
+                <details class="faq__item">
+                    <summary class="faq__question">Qual a durabilidade das fragrâncias?</summary>
+                    <div class="faq__answer">As fragrâncias da Natura e Eudora variam conforme a concentração (Eau de
+                        Parfum, Desodorante Colônia, etc). Em média, nossos perfumes oferecem uma fixação de 6 a 10
+                        horas, dependendo do tipo de pele e da linha escolhida.</div>
+                </details>
+                <details class="faq__item">
+                    <summary class="faq__question">Qual o prazo de entrega?</summary>
+                    <div class="faq__answer">O prazo varia conforme sua região, mas geralmente preparamos o envio em até
+                        24h úteis após a confirmação do pagamento para garantir que chegue rápido até você.</div>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <section class="consultant-profile">
+        <div class="container">
+            <div class="consultant-container">
+                <div class="consultant-image-wrapper">
+                    <img src="assets/anizia-silva.jpg" alt="Consultora Anizia Silva" class="consultant-image">
+                </div>
+                <div class="consultant-info">
+                    <h3 class="consultant-name">Anizia Silva</h3>
+                    <p class="consultant-tagline">Sua Consultora de Beleza</p>
+                    <div class="consultant-bio-text">
+                        <p>
+                            Olá! Sou <strong>Anizia Silva</strong>, assistente social de formação e atualmente no 5º
+                            período de Psicologia.
+                            Minha jornada é movida pelo cuidado e pelo impacto positivo na vida das pessoas, atuando
+                            como aplicadora ABA e
+                            especialista em Análise do Comportamento, com foco em autismo e comorbidades.
+                        </p>
+                        <p style="margin-top: 1rem;">
+                            Mas minha maior inspiração vem de casa: sou mãe da <strong>Valentina</strong>, quem dá nome
+                            a esta boutique.
+                            Através da ValentinaStore, uno minha paixão pelo bem-estar à curadoria das melhores marcas
+                            do mercado,
+                            oferecendo um atendimento humanizado e produtos que elevam a sua autoestima.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-brand" style="margin-bottom: 1.5rem;">
+                <div class="brand-logo-text brand-logo-text--footer">
+                    <span class="logo-text">ValentinaStore</span>
+                </div>
+            </div>
+            <p class="footer__copy">© 2026 ValentinaStore. Todos os direitos reservados.</p>
+            <div class="footer__links">
+                <a href="terms.html">Termos de Uso</a>
+                <a href="privacy.html">Política de Privacidade</a>
+            </div>
+            <div class="footer__security">
+                <div class="security-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                    <span>Ambiente 100% Seguro</span>
+                </div>
+                <div class="security-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    <span>Compra Protegida via WhatsApp</span>
+                </div>
+                <div class="security-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span>Produtos Originais</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- CART ELEMENTS -->
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-header">
+            <h3 class="cart-title">Minha Sacola</h3>
+            <span class="cart-close" onclick="toggleCart()">&times;</span>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <!-- Items will be injected here -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-summary">
+                <div class="cart-summary-item">
+                    <span>Subtotal:</span>
+                    <span id="cartSubtotal">R$ 0,00</span>
+                </div>
+                <div class="cart-summary-item cart-summary-item--discount">
+                    <span>Desconto Total:</span>
+                    <span id="cartDiscount">- R$ 0,00</span>
+                </div>
+                <div class="cart-summary-total">
+                    <span>Total:</span>
+                    <span id="cartTotal">R$ 0,00</span>
+                </div>
+            </div>
+            <button class="cart-checkout-btn" onclick="checkoutWhatsApp()">
+                Finalizar no WhatsApp
+            </button>
+        </div>
+    </div>
+
+    <div class="cart-floating-btn" onclick="toggleCart()">
+        <span class="cart-count" id="cartCount">0</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
+            <path d="M3 6h18"></path>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+        </svg>
+    </div>
+
+    <!-- SCROLL TO TOP -->
+    <div class="scroll-to-top" id="scrollTopBtn" onclick="scrollToTop()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m18 15-6-6-6 6" />
+        </svg>
+    </div>
+
+    <script>
+        // Countdown Logic with Cookie Persistence
+        function updateTimers(durationInSeconds) {
+            const COOKIE_NAME = "rev_timer_end";
+
+            // Function to get or create end time
+            function getEndTime() {
+                let endTime = getCookie(COOKIE_NAME);
+                if (!endTime) {
+                    endTime = Date.now() + (durationInSeconds * 1000);
+                    setCookie(COOKIE_NAME, endTime, 1); // expires in 1 day
+                }
+                return parseInt(endTime);
+            }
+
+            function setCookie(name, value, days) {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/`;
+            }
+
+            function getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+            }
+
+            const endTime = getEndTime();
+
+            // Central Banner Timer
+            const bannerHours = document.getElementById('timer-hours');
+            const bannerMinutes = document.getElementById('timer-minutes');
+            const bannerSeconds = document.getElementById('timer-seconds');
+
+            // Product Card Timers
+            const cardTimers = document.querySelectorAll('.js-timer');
+
+            function tick() {
+                let now = Date.now();
+                let remaining = Math.max(0, Math.floor((endTime - now) / 1000));
+
+                if (remaining <= 0) {
+                    // Optional: Reset timer if it expires or just leave at 00:00:00
+                    // For demo, we'll reset it to show it's working
+                    // let newEnd = Date.now() + (durationInSeconds * 1000);
+                    // setCookie(COOKIE_NAME, newEnd, 1);
+                    // location.reload();
+                }
+
+                let hours = parseInt(remaining / 3600, 10);
+                let minutes = parseInt((remaining % 3600) / 60, 10);
+                let seconds = parseInt(remaining % 60, 10);
+
+                let hStr = hours < 10 ? "0" + hours : hours;
+                let mStr = minutes < 10 ? "0" + minutes : minutes;
+                let sStr = seconds < 10 ? "0" + seconds : seconds;
+                let fullStr = `${hStr}:${mStr}:${sStr}`;
+
+                // Update Banner
+                if (bannerHours) bannerHours.textContent = hStr;
+                if (bannerMinutes) bannerMinutes.textContent = mStr;
+                if (bannerSeconds) bannerSeconds.textContent = sStr;
+
+                // Update Cards
+                cardTimers.forEach(el => {
+                    el.textContent = fullStr;
+                });
+            }
+
+            tick();
+            setInterval(tick, 1000);
+        }
+
+        window.onload = function () {
+            loadProducts(); // Load dynamic products
+            updateTimers(2 * 60 * 60); // 2 hours
+            updateCartUI(); // Initialize cart UI
+        };
+
+        // --- PRODUCT LOADING LOGIC ---
+        function loadProducts() {
+            fetch('products.json')
+                .then(response => response.json())
+                .then(products => {
+                    const container = document.getElementById('productContainer');
+                    if (!container) return;
+
+                    container.innerHTML = '';
+                    products.forEach(p => {
+                        const card = document.createElement('div');
+                        card.className = `product-card ${p.isSale ? 'product-card--sale' : ''}`;
+
+                        card.innerHTML = `
+                            ${p.badge ? `<div class="product-card__badge">${p.badge}</div>` : ''}
+                            <div class="product-card__img-wrapper">
+                                <img src="${p.image}" alt="${p.name}" class="product-card__img">
+                            </div>
+                            ${p.hasTimer ? `
+                                <div class="product-card__timer-mini">
+                                    Termina em: <span class="js-timer">00:00:00</span>
+                                </div>
+                            ` : ''}
+                            <span class="product-card__tag">${p.category}</span>
+                            <h3 class="product-card__title">${p.name}</h3>
+                            <div class="product-card__price-wrapper">
+                                ${p.oldPrice ? `<span class="price-old">R$ ${p.oldPrice.toFixed(2).replace('.', ',')}</span>` : ''}
+                                <p class="product-card__price">R$ ${p.price.toFixed(2).replace('.', ',')}</p>
+                            </div>
+                            <button class="btn btn--primary" onclick="addToCart('${p.name}', ${p.price}, ${p.oldPrice || p.price}, '${p.image}')">
+                                Adicionar
+                            </button>
+                        `;
+                        container.appendChild(card);
+                    });
+                })
+                .catch(err => console.error('Erro ao carregar produtos:', err));
+        }
+
+        // --- CART LOGIC ---
+        let cart = JSON.parse(localStorage.getItem('valentinastore_cart')) || [];
+
+        function toggleCart() {
+            document.getElementById('cartModal').classList.toggle('cart-modal--active');
+            document.getElementById('cartOverlay').classList.toggle('cart-overlay--active');
+        }
+
+        function addToCart(name, price, oldPrice, img) {
+            const item = { name, price, oldPrice, img, id: Date.now() };
+            cart.push(item);
+            saveCart();
+            updateCartUI();
+
+            // Show cart when adding item
+            if (!document.getElementById('cartModal').classList.contains('cart-modal--active')) {
+                toggleCart();
+            }
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            saveCart();
+            updateCartUI();
+        }
+
+        function saveCart() {
+            localStorage.setItem('valentinastore_cart', JSON.stringify(cart));
+        }
+
+        function updateCartUI() {
+            const cartItemsContainer = document.getElementById('cartItems');
+            const cartCountLabel = document.getElementById('cartCount');
+            const cartSubtotalLabel = document.getElementById('cartSubtotal');
+            const cartDiscountLabel = document.getElementById('cartDiscount');
+            const cartTotalLabel = document.getElementById('cartTotal');
+
+            // Update Count
+            cartCountLabel.textContent = cart.length;
+
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<div class="empty-cart-msg">Sua sacola está vazia</div>';
+                cartSubtotalLabel.textContent = 'R$ 0,00';
+                cartDiscountLabel.textContent = '- R$ 0,00';
+                cartTotalLabel.textContent = 'R$ 0,00';
+                return;
+            }
+
+            let subtotal = 0;
+            let total = 0;
+            let discount = 0;
+
+            cartItemsContainer.innerHTML = '';
+            cart.forEach(item => {
+                subtotal += item.oldPrice;
+                total += item.price;
+                discount += (item.oldPrice - item.price);
+
+                const itemHtml = `
+                    <div class="cart-item">
+                        <img src="${item.img}" alt="${item.name}" class="cart-item__img">
+                        <div class="cart-item__info">
+                            <h4>${item.name}</h4>
+                            <p class="cart-item__price">R$ ${item.price.toFixed(2).replace('.', ',')}</p>
+                            ${item.oldPrice > item.price ? `<p class="cart-item__discount">Economia de R$ ${(item.oldPrice - item.price).toFixed(2).replace('.', ',')}</p>` : ''}
+                        </div>
+                        <span class="cart-item__remove" onclick="removeFromCart(${item.id})">&times;</span>
+                    </div>
+                `;
+                cartItemsContainer.innerHTML += itemHtml;
+            });
+
+            cartSubtotalLabel.textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+            cartDiscountLabel.textContent = `- R$ ${discount.toFixed(2).replace('.', ',')}`;
+            cartTotalLabel.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+        }
+
+        function checkoutWhatsApp() {
+            if (cart.length === 0) return;
+
+            const phone = "5584987610106";
+            let message = "*Novo Pedido - ValentinaStore*\n";
+            message += "Olá, gostaria de falar com a consultora *Anizia Silva*.\n\n";
+
+            let total = 0;
+            let discount = 0;
+
+            cart.forEach((item, index) => {
+                message += `${index + 1}. *${item.name}*\n`;
+                message += `   Preço: R$ ${item.price.toFixed(2).replace('.', ',')}\n\n`;
+                total += item.price;
+                discount += (item.oldPrice - item.price);
+            });
+
+            message += `---------------------------\n`;
+            message += `*Total do Pedido: R$ ${total.toFixed(2).replace('.', ',')}*\n`;
+            message += `*Economia de: R$ ${discount.toFixed(2).replace('.', ',')}*\n\n`;
+            message += `Gostaria de finalizar meu pedido!`;
+
+            const encodedMessage = encodeURIComponent(message);
+            window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+        }
+
+        // --- SCROLL TO TOP LOGIC ---
+        const scrollTopBtn = document.getElementById('scrollTopBtn');
+
+        window.onscroll = function () {
+            if (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) {
+                scrollTopBtn.classList.add('scroll-to-top--active');
+            } else {
+                scrollTopBtn.classList.remove('scroll-to-top--active');
+            }
+        };
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+    </script>
+</body>
+
+</html>

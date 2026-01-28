@@ -1,0 +1,40 @@
+[
+    {
+        "id": 1,
+        "name": "Kaiak Oceano Masculino 100 ml",
+        "category": "Perfumaria",
+        "price": 159.99,
+        "oldPrice": 189.90,
+        "image": "assets/kaiak-oceano-final.png",
+        "isSale": true,
+        "badge": "OFERTA RELÂMPAGO",
+        "hasTimer": true
+    },
+    {
+        "id": 6,
+        "name": "Shampoo Eudora Siàge Gold Infusion",
+        "category": "Cabelos",
+        "price": 35.90,
+        "oldPrice": 39.90,
+        "image": "assets/eudora-shampoo-v2.png",
+        "isSale": true
+    },
+    {
+        "id": 7,
+        "name": "Eudora Siàge Resgate Imediato 4D - 250ml",
+        "category": "Tratamento",
+        "price": 39.99,
+        "oldPrice": 48.00,
+        "image": "assets/eudora-resgate-v2.png",
+        "isSale": true
+    },
+    {
+        "id": 8,
+        "name": "Natura Luna Clássico - 75ml",
+        "category": "Perfumaria",
+        "price": 154.90,
+        "oldPrice": 185.90,
+        "image": "assets/natura-luna-v2.png",
+        "isSale": true
+    }
+]
